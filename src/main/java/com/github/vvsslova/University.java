@@ -9,24 +9,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @author vvsslova
  * Этот класс реализовывает структуру университета, которая представлена двумя вложенными классами:
- * Faculty и Depertment. Какждый из классов формирует структуру на своем уровне при помощи
- * методов добавления/удаления сущностей. Также предоставлена возможность по определенным критериям узнать,
- * какие именно сущности были добавлены в структуру на том или ином уровне.
+ * Faculty и Department.
  * Созданные мною исключения вынесены в отдельную папку!
  */
 @Getter
 @Slf4j
 public class University {
     private final String name;
-    List<Faculty> facultyList;
+    private final List<Faculty> facultyList;
 
-    /**
-     * Конструктор создает университет и список факультетов для каждого экземпляра.
-     * Под списком в методах ниже будет подразумеваться слово "структура".
-     * @param name Название университета.
-     */
     public University(String name) {
         this.name = name;
         this.facultyList = new LinkedList<>();
@@ -34,16 +26,13 @@ public class University {
 
     /**
      * Метод добавляет факультет в структуру университета.
-     * Если добавляемый факультет уже есть, то вызывается исключение.
      * @param faculty Факультет, который необходимо добавить.
+     * @throws FacultyAlreadyExistsException Исключение, выбрасываемое, если такой факультет уже существует.
      */
-    public void addFaculty(Faculty faculty) {
+    public void addFaculty(Faculty faculty) throws FacultyAlreadyExistsException {
         if (facultyList.contains(faculty)) {
-            try {
-                throw new FacultyAlreadyExistsException("Этот факультет уже существует в структуре университета!");
-            } catch (FacultyAlreadyExistsException e) {
-                log.info(e.getMessage());
-            }
+            throw new FacultyAlreadyExistsException("Этот факультет уже существует в структуре университета!");
+
         } else {
             facultyList.add(faculty);
             log.info("Факультет {} добавлен в структуру университета", faculty.name);
@@ -52,18 +41,14 @@ public class University {
 
     /**
      * Метод удаляет факультет из структуры университета.
-     * Если факультет отсуствует, то вызывается исключение.
-     * @param faculty Факультет, который надо удалить.
+     * @param faculty Факультет, который необходимо удалить.
+     * @throws EntityNotFoundException Исключение, которое выбрасывается, если такого факультета не существует.
      */
-    public void removeFaculty(Faculty faculty) {
+    public void removeFaculty(Faculty faculty) throws EntityNotFoundException {
         if (facultyList.contains(faculty)) {
             facultyList.remove(faculty);
             log.info("Факультет {} удалён из структуры университета", faculty.name);
-        } else try {
-            throw new EntityNotFoundException("Этого факультета не существует в структуре университета!");
-        } catch (EntityNotFoundException e) {
-            log.info(e.getMessage());
-        }
+        } else throw new EntityNotFoundException("Этого факультета не существует в структуре университета!");
     }
 
     /**
@@ -78,20 +63,12 @@ public class University {
 
     /**
      * Данный класс реализует структуру университета на факультетском уровне.
-     * Основные методы: добавление/удаление кафедр
-     * и получение информации о названиях кафедр, существующих на факультете.
      */
     @Getter
     static class Faculty {
         private final String name;
-        List<Department> departmentList;
-        private Department department;
+        private final List<Department> departmentList;
 
-        /**
-         * Конструктор создает факультет и список кафедр для каждого экземпляра.
-         * Под списком в методах ниже будет подразумеваться слово "структура".
-         * @param name Название факультета.
-         */
         public Faculty(String name) {
             this.name = name;
             this.departmentList = new LinkedList<>();
@@ -99,16 +76,13 @@ public class University {
 
         /**
          * Метод добавляет кафедру в структуру факультета.
-         * Если такая кафедра уже существует, то выбрасывается исключение.
-         * @param department Кафедра, которую необходимо добавить.
+         *
+         * @param department Кафедра, которую необходимо добавить
+         * @throws DepartmentAlreadyExistsException Исключение, которое выбрасывается, если такая кафедра уже существует
          */
-        public void addDepartment(Department department) {
+        public void addDepartment(Department department) throws DepartmentAlreadyExistsException {
             if (departmentList.contains(department)) {
-                try {
-                    throw new DepartmentAlreadyExistsException("Эта кафедра существует на данном факультете!");
-                } catch (DepartmentAlreadyExistsException e) {
-                    log.info(e.getMessage());
-                }
+                throw new DepartmentAlreadyExistsException("Эта кафедра существует на данном факультете!");
             } else {
                 departmentList.add(department);
                 log.info("Кафедра {} добавлена в список факультета", department.name);
@@ -117,18 +91,15 @@ public class University {
 
         /**
          * Метод удаляет кафедру из структуры факультета.
-         * Если такая кафедра отсутствует, то выбрасывается исключение.
-         * @param department Кафедра, которую необходимо удалить.
+         *
+         * @param department Кафедра, которую необходимо удалить
+         * @throws EntityNotFoundException Исключение, которое выбрасывается, если такой кафедры не существует
          */
-        public void removeDepartment(Department department) {
+        public void removeDepartment(Department department) throws EntityNotFoundException {
             if (departmentList.contains(department)) {
                 departmentList.remove(department);
                 log.info("Кафедра {} удалена из списка факультета", department.name);
-            } else try {
-                throw new EntityNotFoundException("Этой кафедры не существует на факультете!");
-            } catch (EntityNotFoundException e) {
-                log.info(e.getMessage());
-            }
+            } else throw new EntityNotFoundException("Этой кафедры не существует на факультете!");
         }
 
         /**
@@ -144,22 +115,13 @@ public class University {
 
     /**
      * Данный класс реализует структуру университета на уровне кафедры.
-     * Основные методы: добавление/удаление сотрудников и студентов
-     * и получение информации о фамилиях студентов и сотрудников.
      */
     @Getter
     static class Department {
         private final String name;
-        List<Employee> empolyeeList;
-        List<Student> studentList;
-        private Student student;
-        private Employee employee;
+        private final List<Employee> empolyeeList;
+        private final List<Student> studentList;
 
-        /**
-         * Конструктор создает кафедру и списки студентов и сотрудников для каждого экземпляра.
-         * Под списком в методах ниже будет подразумеваться слово "структура".
-         * @param name Название факультета.
-         */
         public Department(String name) {
             this.name = name;
             this.empolyeeList = new LinkedList<>();
@@ -167,17 +129,14 @@ public class University {
         }
 
         /**
-         * Метод добавляет студента в структуру кафедры.
-         * Если такой студент уже есть, то выбрасывается исключение.
-         * @param student Студент, которого надо добавить.
+         * Метод добавляет студента в структуру кафедры
+         *
+         * @param student Студент, которого необходимо добавить
+         * @throws StudentAlreadyExistsException Исключение, которое выбрасывается, если такой студент уже существует
          */
-        public void addStudent(Student student) {
+        public void addStudent(Student student) throws StudentAlreadyExistsException {
             if (studentList.contains(student)) {
-                try {
-                    throw new StudentAlreadyExistsException("Этот студент уже существует на кафедре!");
-                } catch (StudentAlreadyExistsException e) {
-                    log.info(e.getMessage());
-                }
+                throw new StudentAlreadyExistsException("Этот студент уже существует на кафедре!");
             } else {
                 studentList.add(student);
                 log.info("Студент {} {} добавлен в список студентов кафедры", student.getName(), student.getSurname());
@@ -185,17 +144,14 @@ public class University {
         }
 
         /**
-         * Метод добавляет сотрудника в структуру кафедры.
-         * Если такой сотрудник уже есть, то выбрасывается исключение.
-         * @param employee Сотрудник, которого надо добавить.
+         * Метод добавляет сотрудника в структуру кафедры
+         *
+         * @param employee Сотрудник, которого необходимо добавить
+         * @throws EmployeeAlreadyExistsException Исключение, выбрасываемое, если такой сотрудник уже существует
          */
-        public void addEmployee(Employee employee) {
+        public void addEmployee(Employee employee) throws EmployeeAlreadyExistsException {
             if (empolyeeList.contains(employee)) {
-                try {
-                    throw new EmployeeAlreadyExistsException("Этот сотрудник уже существует на кафедре!");
-                } catch (EmployeeAlreadyExistsException e) {
-                    log.info(e.getMessage());
-                }
+                throw new EmployeeAlreadyExistsException("Этот сотрудник уже существует на кафедре!");
             } else {
                 empolyeeList.add(employee);
                 log.info("Сотрудник {} {} добавлен в список сотрудников кафедры", employee.getName(), employee.getSurname());
@@ -204,36 +160,28 @@ public class University {
 
         /**
          * Метод удаляет студента из структуры кафедры.
-         * Если такой студент отсутствует, то выбрасывается исключение.
-         * @param student Студент, которого надо удалить
+         *
+         * @param student Студент, которого надо удалить.
+         * @throws EntityNotFoundException Исключение, выбрасываемое, если такой студент отсутствует
          */
-        public void removeStudent(Student student) {
+        public void removeStudent(Student student) throws EntityNotFoundException {
             if (studentList.contains(student)) {
                 studentList.remove(student);
                 log.info("Студент {} {} удалён из списка студентов кафедры", student.getName(), student.getSurname());
-            } else {
-                try {
-                    throw new EntityNotFoundException("Данного студента не существует на этой кафедре!");
-                } catch (EntityNotFoundException e) {
-                    log.info(e.getMessage());
-                }
-            }
+            } else throw new EntityNotFoundException("Данного студента не существует на этой кафедре!");
         }
 
         /**
          * Метод удаляет сотрудника из структуры кафедры.
-         * Если такой сотрудник отстутствует, то выбрасывается исключение.
-         * @param employee Сотрудник, которого надо удалить
+         *
+         * @param employee Сотрудник, которого надо удалить.
+         * @throws EntityNotFoundException Исключение, выбрасываемое, если такой сотрудник отсутсвует
          */
-        public void removeEmployee(Employee employee) {
+        public void removeEmployee(Employee employee) throws EntityNotFoundException {
             if (empolyeeList.contains(employee)) {
                 empolyeeList.remove(employee);
                 log.info("Сотрудник {} {} удалён из списка сотрудников кафедры", employee.getName(), employee.getSurname());
-            } else try {
-                throw new EntityNotFoundException("Данного сотрудника не существует на кафедре!");
-            } catch (EntityNotFoundException e) {
-                log.info(e.getMessage());
-            }
+            } else throw new EntityNotFoundException("Данного сотрудника не существует на кафедре!");
         }
 
         /**

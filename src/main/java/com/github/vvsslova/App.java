@@ -1,5 +1,6 @@
 package com.github.vvsslova;
 
+import com.github.vvsslova.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -8,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class App {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws EmployeeAlreadyExistsException, EntityNotFoundException, StudentAlreadyExistsException, DepartmentAlreadyExistsException, FacultyAlreadyExistsException {
         University MSU = new University("MSU");
         log.info("Создали университет MSU");
         University.Faculty journalismFaculty = new University.Faculty("Faculty of Journalism");
@@ -59,5 +60,6 @@ public class App {
         journalismFaculty.getDepartmentList();
         russianLiteratureDepartment.getEmployeeList();
         mediaCommunicationsDepartment.getStudentList();
+        russianLiteratureDepartment.getStudentList();
     }
 }
